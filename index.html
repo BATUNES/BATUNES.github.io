@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <script src="https://code.jquery.com/jquery-3.5.1.js" charset="utf-8"></script>
+	<style>
+		.pub {
+			border: 1px solid gray;
+			border-radius: 5px;
+			width: 123px;
+			display: inline-block;
+			text-decoration: none;
+			color: black;
+			padding-top: 100%
+			height: 1em;
+			position:relative;
+			vertical-align: middle;
+			background: #ddd;
+			font-family: Arial, Sans-Serif;
+		}
+		.pub img {
+			width: 100%;
+			height: 50px;
+			image-rendering: crisp-edges;
+			image-rendering: -webkit-optimize-contrast;
+			filter: invert(92%);
+		}
+		.pub p {
+			max-width: 100%;
+			padding: 0px;
+			margin: 0px;
+			overflow-wrap: break-word;
+			text-align: center;
+		}
+		.ringtone {
+			background: #2295bf;//#C8CCDD;
+		}
+	</style>
+    <title>Bassie & Adriaan Themes</title>
+  </head>
+  <body>
+	<form action="" method="get"> 
+		Lengte:<br>
+		<input type="checkbox" name="short" id="short" \><label for="short">Kort</label><br>
+		<input type="checkbox" name="long" id="long" \><label for="long">Lang</label><br>
+		Componist:<br>
+		<input type="radio" name="comp" id="smoor" value="Bert Smoorenburg"\><label for="smoor">Bert Smoorenburg</label><br>
+		<input type="radio" name="comp" id="klaris" value="Aad Klaris"\><label for="klaris">Aad Klaris</label><br>
+		<input type="radio" name="comp" id="q" value="" \><label for="q">allebei</label><br>
+		Lied:<br>
+		<input type="radio" name="song" id="hallo" value="Hallo"\><label for="hallo">Hallo Vriendjes</label><br>
+		<input type="radio" name="song" id="dag" value="Dag"\><label for="dag">dag Vriendjes</label><br>
+		<input type="radio" name="song" id="qq" value="" \><label for="qq">allebei</label><br>
+		<input type="submit"><br>
+	</form>
+	<div id=o></div>
+    <script>
+		const ughs = new URL(window.location.href);
+		let Long = ughs.searchParams.get("long") || "";
+		let Short = ughs.searchParams.get("short") || "";
+		let comp = ughs.searchParams.get("comp") || "";
+		let sng = ughs.searchParams.get("song") || "";
+		/*const tmpdata = [
+			{"title": "Dag", "tag": [], "by": "Bert Smoorenburg", "file": "Dag Vriendjes LHV (DVD).wav", "from": "Leer het verkeer DVD"},
+			{"title": "Dag", "tag": [], "by": "Bert Smoorenburg", "file": "Dag Vriendjes Grootmoeder's Tijd.wav", "from": "60 Liedjes uit grootmoeder\'s tijd DVD"},
+			{"title": "Dag", "tag": [], "by": "Aad Klaris", "file": "Dag Vriendjes Klaris Schatkaart.wav", "from": "Schatkaart VHS", "len":"l"},
+			{"title": "Dag", "tag": [], "by": "Aad Klaris", "file": "Dag Vriendjes Klaris Griekenland.wav", "from": "Griekenland VHS", "len":"l"},
+			{"title": "Dag", "tag": [], "by": "Aad Klaris", "file": "Dag Vriendjes Klaris Europa.wav", "from": "Europa VHS", "len":"l"},
+			{"title": "Dag", "tag": ["rtm"], "by": "", "file": "DAG VRIENDJES MONO.mp3", "from": "Ringtonio PREVIEW", "len":"s"},
+			{"title": "Dag", "tag": ["rtp", "i"], "by": "Aad Klaris", "file": "DAG VRIENDJES POLY.mp3", "from": "Ringtonio PREVIEW"},
+			{"title": "Hallo", "tag": [], "by": "Bert Smoorenburg", "file": "Hallo Vriendjes Grootmoeder's Tijd.wav", "from": "60 Liedjes uit grootmoeder\'s tijd DVD", "len":"s"},
+			{"title": "Hallo", "tag": [], "by": "Bert Smoorenburg", "file": "Hallo vriendjes griekenland.wav", "from": "Griekenland YT", "len":"l"},
+			{"title": "Hallo", "tag": [], "by": "Aad Klaris", "file": "Hallo Vriendjes Klaris Griekenland.wav", "from": "Griekenland VHS", "len":"l"},
+			{"title": "Hallo", "tag": [], "by": "Aad Klaris", "file": "Hallo vriendjes Klaris Europa.wav", "from": "Europa VHS", "len":"l"},
+			{"title": "Hallo", "tag": [], "by": "Aad Klaris", "file": "Hallo Vriendjes Klaris Schatkaart.wav", "from": "Schatkaart VHS", "len":"l"}
+		];*/
+		getThem();
+		function getThem(){
+			$.getJSON("./index.json", data);
+			//data(tmpdata);
+		}
+		async function data(data){
+			let o = document.getElementById("o");
+			o.innerHTML = "";
+			for(let i=0;i<data.length;i++){
+				if((Long == "on" && data[i].len == "l" && Short == "")||(Short == "on" && data[i].len == "s" && Long == "")||( Short == "on" && Long == "on" && data[i].len == "" )||( Short == "" && Long == "")){
+					if(comp == "" || comp.replace(/\+/g, " ") == data[i].by){
+						if(sng == "" || sng.replace(/\+/g, " ") == data[i].title){
+							let tmp0 = document.createElement(`a`);
+							tmp0.classList.add("pub");
+							tmp0.href = "./" + data[i].file;
+							let tmp1 = document.createElement(`p`);
+							tmp1.innerHTML = `${data[i].title} Vriendjes`;
+							tmp0.appendChild(tmp1);
+							let tmp2 = document.createElement(`img`);
+							tmp2.src = data[i].file + ".png";
+							tmp0.appendChild(tmp2);
+							//getThumb(data[i].url, tmp0);
+							let tmp3 = document.createElement(`p`);
+							tmp3.innerHTML = `${data[i].by}\n${data[i].from}`;
+							tmp0.appendChild(tmp3);
+							if(data[i].tag.includes("rtp")||data[i].tag.includes("rtm")) tmp0.classList.add("ringtone");
+							o.appendChild(tmp0);
+						}
+					}
+				}
+			}
+		}
+		function getThumb(url, dest){
+			let a = document.createElement(`img`);
+			$.getJSON(url, function(data){a.src = "https://view.publitas.com"+data.spreads[0].pages[0]+"-at200.jpg";dest.appendChild(a);});
+		}
+		//getThumb("https://api.publitas.com/v1/groups/malmberg/publications/de-wereld-in-getallen-pluswerkboek-groep-5-blok-2.json");
+    </script>
+  </body>
+</html>
